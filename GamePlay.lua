@@ -12,6 +12,7 @@ local largest_num = (grid_size + 1) * (grid_size + 1)
 
 -- forward declare
 local createButton
+local initUI
 local shuffleTable
 local createNumTable
 local getRandomNum 
@@ -21,12 +22,16 @@ local num_table = {}
 local widget = require "widget"
 local composer = require( "composer" )
 local scene = composer.newScene()
+
+local game_mode
 local quiz_text
 local score_text
 local timer_clock
 local score_counter = 0
-local secondsLeft = 30
+local secondsLeft = 00
 local next_num
+local home_button
+local countDownTimer
 local function listener1( obj )
     nextNum()
 end
@@ -34,28 +39,25 @@ end
 -- 
 function scene:create( event )
     local sceneGroup = self.view
+    local params = event.params
+	game_mode = params.mode
+    print( game_mode )
+
     local background = display.newImageRect( "blank.png", display.contentWidth, display.contentHeight )
 	background.anchorX = 0
 	background.anchorY = 0
 	background.x, background.y = 0, 0
 
 	local score = display.newText( "score: ", contentWidth * 0.12, contentHeight * 0.04, native.systemFont, 20 )
-	quiz_text = display.newText( "", contentWidth * 0.5, contentHeight * 0.1, native.systemFontBold, 45 )
-	score_text = display.newText( score_counter, contentWidth * 0.24, contentHeight * 0.04, native.systemFont, 20 )
-	timer_clock = display.newText( "00:" .. secondsLeft, contentWidth * 0.5, contentHeight * 0.23, native.systemFontBold, 30 )
-	timer_clock:setFillColor( 1, 0, 1 )
 	score:setFillColor( 1,1,0 )
-
-	createNumTable((grid_size+1) * (grid_size+1))
-	createButtonGrid(grid_size)
-    buttongroup.x = (contentWidth - (grid_size * buttonW + grid_size * stepX))/2
-    buttongroup.y = contentHeight * 0.35
+	initUI()
     sceneGroup:insert( background )
     sceneGroup:insert( buttongroup )
     sceneGroup:insert( quiz_text )
     sceneGroup:insert( score_text )
     sceneGroup:insert( timer_clock )
     sceneGroup:insert( score )
+    sceneGroup:insert( home_button )
 end
 
 function scene:show( event )
@@ -63,16 +65,43 @@ function scene:show( event )
 	local phase = event.phase
 	
 	if phase == "will" then
-		-- Called when the scene is still off screen and is about to move on screen
-	elseif phase == "did" then
 		next_num = getRandomNum()
 		nextNum()
-		local countDownTimer = timer.performWithDelay( 1000, updateTime, secondsLeft )
+		if (game_mode == "timeAttack") then
+			secondsLeft = 30
+			timer_clock.text = "00:" ..secondsLeft
+			countDownTimer = timer.performWithDelay( 1000, updateTime, secondsLeft )
+		elseif (game_mode == "infinite") then
+			timer_clock.isVisible = false
+		end
+		-- Called when the scene is still off screen and is about to move on screen
+	elseif phase == "did" then
+		
 		-- Called when the scene is now on screen
 		-- 
 		-- INSERT code here to make the scene come alive
 		-- e.g. start timers, begin animation, play audio, etc.
 	end	
+end
+
+-- "scene:hide()"
+function scene:hide( event )
+
+    local sceneGroup = self.view
+    local phase = event.phase
+
+    if ( phase == "will" ) then
+        -- Called when the scene is on screen (but is about to go off screen)
+        -- Insert code here to "pause" the scene
+        -- Example: stop timers, stop animation, stop audio, etc.
+    elseif ( phase == "did" ) then
+        -- Called immediately after scene goes off screen
+    end
+end
+
+function scene:destroy( event )
+	local sceneGroup = self.view
+	-- scene:removeSelf( )
 end
 
 -- Button creation funtion
@@ -128,8 +157,41 @@ function onButtonClick( event )
 			event.target:setLabel(largest_num)
 			next_num = getRandomNum()
 			print( id )
+		elseif (id == "home") then
+			event.target.xScale = .8 -- scale the button on touch release 
+    		event.target.yScale = .8
+		else 
+			print( "Game over" )
 		end
 	end
+	if (event.phase == "ended" or event.phase == "cancelled") then
+		if (id == "home") then
+			event.target.xScale = 1 -- scale the button on touch release 
+    		event.target.yScale = 1
+    		composer.removeScene( "GamePlay", false )
+    		composer.removeScene( "GameMode", false )
+    		composer.gotoScene( "menu", "fade", 500 )
+		end
+	end
+
+end
+
+function initUI( )
+	quiz_text = display.newText( "", contentWidth * 0.5, contentHeight * 0.1, native.systemFontBold, 45 )
+	score_text = display.newText( score_counter, contentWidth * 0.24, contentHeight * 0.04, native.systemFont, 20 )
+	timer_clock = display.newText( "00:" .. secondsLeft, contentWidth * 0.5, contentHeight * 0.23, native.systemFontBold, 30 )
+	timer_clock:setFillColor( 1, 0, 1 )
+
+	home_button = display.newImageRect("home_icon.png",50, 50)
+	home_button.y = contentHeight - home_button.height *.5
+	home_button.x = home_button.width * .5
+	home_button.id = "home"
+	home_button:addEventListener( "touch", onButtonClick )
+
+	createNumTable((grid_size+1) * (grid_size+1))
+	createButtonGrid(grid_size)
+    buttongroup.x = (contentWidth - (grid_size * buttonW + grid_size * stepX))/2
+    buttongroup.y = contentHeight * 0.35
 end
 
 math.randomseed( os.time() )
@@ -176,6 +238,9 @@ function updateTime()
 	-- make it a string using string format.  
 	local timeDisplay = string.format( "%02d:%02d", minutes, seconds )
 	timer_clock.text = timeDisplay
+	if (seconds == 0 and minutes == 0) then
+		print( "game over" )
+	end
 end
 
 function nextNum(  )
@@ -184,6 +249,6 @@ function nextNum(  )
 end
 scene:addEventListener( "create", scene )
 scene:addEventListener( "show", scene )
--- scene:addEventListener( "hide", scene )
--- scene:addEventListener( "destroy", scene )
+scene:addEventListener( "hide", scene )
+scene:addEventListener( "destroy", scene )
 return scene

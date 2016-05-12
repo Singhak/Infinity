@@ -10,6 +10,8 @@ local centerX = display.contentCenterX
 local centerY = display.contentCenterY
 local initUi
 local composer = require( "composer" )
+local toast = require('plugin.toast')
+
 local scene = composer.newScene()
 
 -- include Corona's "widget" library
@@ -81,14 +83,14 @@ end
 
 function initUi()
 	-- setting Button
-	setting_button = display.newImageRect("setting_icon.png",60, 60)
+	setting_button = display.newImageRect("setting_icon1.png",60, 60)
 	setting_button.y = contentH - setting_button.height * 0.60
 	setting_button.x = setting_button.width * 0.60
 	setting_button.id = "setting"
 	setting_button:addEventListener( "touch", onButtonClick )
 
 	-- LeaderboardButton
-	leaderboard_button = display.newImageRect("leaderboard_icon.png",60, 60)
+	leaderboard_button = display.newImageRect("lb_icon.png",60, 60)
 	leaderboard_button.y = contentH - leaderboard_button.height * 0.60
 	leaderboard_button.x = contentW - leaderboard_button.width * 0.60
 	leaderboard_button.id = "leaderboard"
@@ -109,18 +111,36 @@ function onButtonClick( event )
 		event.target.xScale = .8 -- scale the button on touch release 
     	event.target.yScale = .8
 		if (id == "setting") then
-    		myText.text = id
+			-- onPause()
+			composer.showOverlay( "Settings" )
+    		-- myText.text = id
 		elseif (id == "play") then
-    		composer.gotoScene( "GamePlay", "fade", 500 )
+    		composer.gotoScene( "GameMode", "fade", 500 )
 		elseif (id == "leaderboard") then
-    		myText.text = id
+    		toast.show('leaderboard is comming soon!')
 		end
 		
 	elseif (event.phase == "ended" or event.phase == "cancelled") then
-    	event.target.xScale = 1 -- Re-scale the button on touch release 
+		event.target.xScale = 1 -- Re-scale the button on touch release 
     	event.target.yScale = 1
+		if (id == "setting") then
+			onPause()
+		end
 	end
 	
+end
+
+function scene:onResume( )
+	-- setting_button
+	setting_button:addEventListener( "touch", onButtonClick )
+	leaderboard_button:addEventListener( "touch", onButtonClick )
+	start_button:addEventListener( "touch", onButtonClick )
+end
+
+function onPause( )
+	setting_button:removeEventListener( "touch", onButtonClick )
+	leaderboard_button:removeEventListener( "touch", onButtonClick )
+	start_button:removeEventListener( "touch", onButtonClick )
 end
 ---------------------------------------------------------------------------------
 

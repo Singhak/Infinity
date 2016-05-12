@@ -21,6 +21,13 @@ settings =
 		iphone = { "Icon-*dpi.png", },
 		android = { "Icon.png", "Icon-Small-*.png", "Icon*@2x.png", },
 	},
+	
+	--
+	-- Toast plugin
+	--
+	plugins = {  
+    ['plugin.toast'] = {publisherId = 'com.spiralcodestudio'}
+	},
 
 	--
 	-- iOS Section

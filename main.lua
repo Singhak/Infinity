@@ -17,7 +17,7 @@ splashscreen.y = display.contentCenterY
 local function removeSplash(event)
 	splashscreen:removeSelf()
 	splashscreen = nil
-	composer.gotoScene( "menu", "fade", 1000  )
+	composer.gotoScene( "menu", "fade", 500  )
 end
 
 -- transition.fadeIn( splashscreen, {time = 0} )
