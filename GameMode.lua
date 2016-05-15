@@ -1,6 +1,7 @@
 local composer = require( "composer" )
 local widget = require( "widget" )
-
+local utility = require ("Utility")
+local toast = require('plugin.toast')
 local scene = composer.newScene()
 
 -- -----------------------------------------------------------------------------------------------------------------
@@ -13,6 +14,31 @@ local scene = composer.newScene()
 local infiniteMode_btn
 local fifteenSec_btn
 local timeAttac_btn
+local is_effect_on = true
+local options
+local function onComplete( event )
+    if ( event.action == "clicked" ) then
+        local i = event.index
+        if ( i == 1 ) then
+            composer.gotoScene( "GamePlay", options )
+            -- Do nothing; dialog will simply dismiss
+        elseif ( i == 2 ) then
+            -- Open URL if "Learn More" (second button) was clicked
+        end
+    end
+end
+
+-- Show alert with two buttons
+local function alertBox( msg )
+    local alert = native.showAlert( "Go Infinite", msg, { "OK" }, onComplete )
+end
+
+
+local function playSound( )
+    if (is_effect_on) then
+        audio.play( utility.soundTable ["button_click_sound"] )
+    end
+end
 
 -- "scene:create()"
 function scene:create( event )
@@ -22,6 +48,8 @@ function scene:create( event )
     background.anchorX = 0
     background.anchorY = 0
     background.x, background.y = 0, 0
+
+    is_effect_on = utility.load("effect", true)
     initUI()
     sceneGroup:insert( background )
     sceneGroup:insert( infiniteMode_btn )
@@ -74,7 +102,7 @@ function scene:destroy( event )
 end
 
 function initUI( )
-        -- setting Button
+
     infiniteMode_btn = widget.newButton(
     {
         label = "Infinite",
@@ -92,7 +120,6 @@ function initUI( )
     infiniteMode_btn.y = display.contentHeight * .25
     infiniteMode_btn:addEventListener( "touch", onButtonClick )
 
-    -- LeaderboardButton
     fifteenSec_btn = widget.newButton(
     {
         label = "15 seconds",
@@ -110,7 +137,6 @@ function initUI( )
     fifteenSec_btn.y = display.contentHeight * .5
     fifteenSec_btn:addEventListener( "touch", onButtonClick )
 
-    -- Play button
     timeAttac_btn = widget.newButton(
     {
         label = "Time Attack",
@@ -131,9 +157,11 @@ end
 
 function onButtonClick( event )
     local id = event.target.id
+    
     if (event.phase == "began") then
+        playSound()
         if (id == "fifteenSecond") then
-            local options =
+            options =
             {
                 effect = "fade",
                 time = 500,
@@ -141,10 +169,11 @@ function onButtonClick( event )
                              mode = "fifteenSecond",
                         }
             }
-            
-            composer.showOverlay( "GamePlay", options )
+            toast.show("To be announce")
+            -- composer.showOverlay( "GamePlay", options )
         elseif (id == "infinite") then
-            local options =
+            local msg = "In this mode by default time is 30 seconds, but time will increase by 1 second when you will give right answer."
+            options =
             {
                 effect = "fade",
                 time = 500,
@@ -152,9 +181,11 @@ function onButtonClick( event )
                              mode = "infinite",
                         }
             }
-            composer.gotoScene( "GamePlay", options )
+            alertBox(msg)
+            -- composer.gotoScene( "GamePlay", options )
         elseif (id == "timeAttack") then
-            local options =
+            local msg = "In this mode you have to make maximum score with in given time limit."
+            options =
             {
                 effect = "fade",
                 time = 500,
@@ -162,7 +193,8 @@ function onButtonClick( event )
                              mode = "timeAttack",
                         }
             }
-            composer.gotoScene( "GamePlay", options )
+            alertBox(msg)
+            -- composer.gotoScene( "GamePlay", options )
         end
     end
 end

@@ -21,7 +21,7 @@ local contentH = display.contentHeight
 local sound_on_img = {type = "image", filename = "sound_on.png"}
 local sound_off_img = {type = "image", filename = "sound_off.png"}
 local effect_on_img = {type = "image", filename = "music_on.png"}
-local effect_off_img = {type = "image", filename = "sound_off.png"}
+local effect_off_img = {type = "image", filename = "music_off.png"}
 
 local background = display.newRoundedRect(0,0, contentW  * 0.8, contentH * 0.5, 15)
 background.strokeWidth = 4
@@ -32,20 +32,28 @@ background.y = display.contentHeight *.5
 
 local function onButtonClick(event)
 	local id = event.target.id
+	local isSound = utility.load("effect", true)
 	if (event.phase == "began") then
 		if (id == "close") then
 			composer.hideOverlay( "Settings" )
 		elseif (id == "moreapps") then
-
+			if (isSound) then
+				audio.play( utility.soundTable["button_click_sound"] )
+			end
+			system.openURL( "http://play.google.com/store/search?q=pub:AlienApps" )
 		elseif (id == "leaderboard") then 
-
+			if (isSound) then
+				audio.play( utility.soundTable["button_click_sound"] )
+			end
 		elseif (id == "effect") then
-			local isSound = utility.load("effect", true)
+			
 			print( isSound )
 
 			if (isSound) then
+				audio.play( utility.soundTable["button_click_sound"] )
 				utility.save("effect", false)
 				effect_button.fill = effect_off_img
+				
 			else
 				utility.save("effect", true)
 				effect_button.fill = effect_on_img
@@ -53,12 +61,17 @@ local function onButtonClick(event)
 			
 		elseif (id == "music") then
 			local isMusic = utility.load("music", true)
+			if (isSound) then
+				audio.play( utility.soundTable["button_click_sound"] )
+			end
 			if (isMusic) then
 				utility.save("music", false)
 				music_button.fill = sound_off_img
+				audio.stop()
 			else
 				utility.save("music", true)
 				music_button.fill = sound_on_img
+				audio.play( utility.soundTable["background_sound"] )
 			end
 		end
 	end
@@ -67,7 +80,7 @@ end
 
 local function initUI( )
 	-- setting Button
-	more_apps_button = display.newImageRect("setting_icon1.png", 45, 45)
+	more_apps_button = display.newImageRect("more_apps_icon.png", 45, 45)
 	more_apps_button.x = contentW * .65 + more_apps_button.height
 	more_apps_button.y = contentH * .68 - more_apps_button.width
 	more_apps_button.id = "moreapps"
@@ -158,11 +171,6 @@ end
 -- If scene's view is removed, scene:destroyScene() will be called just prior to:
 function scene:destroy( event )
 	local group = self.view
-	if PushBtn then
-		PushBtn:removeSelf()	-- widgets must be manually removed
-		PushBtn = nil
-		print( "destroy" )
-	end
 end
 
 -----------------------------------------------------------------------------------------

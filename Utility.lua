@@ -1,15 +1,21 @@
 local json = require( "json" )
 local M = {}
-M.userdefault_table = {}
+-- M.userdefault_table = {}
 M.filename = "userdefault.json"
 
-function M.save(user_default_key, value)
-	M.userdefault_table[user_default_key] = value
-	print( M.userdefault_table[user_default_key] )
+M.soundTable = {
+
+    num_click_sound = audio.loadSound( "game_button_click.wav" ),
+    button_click_sound = audio.loadSound( "other_button_click.wav" ),
+    wrong_button_click = audio.loadSound( "wrong_answer.wav" ),
+    background_sound = audio.loadSound( "background_music.mp3" )
+}
+
+local function saveData( tabel )
    local path = system.pathForFile( M.filename, system.DocumentsDirectory )
    local file = io.open(path, "w")
    if ( file ) then
-      local jsonSaveGame = json.encode(M.userdefault_table)
+      local jsonSaveGame = json.encode(tabel)
       file:write( jsonSaveGame )
       io.close( file )
       return true
@@ -18,8 +24,8 @@ function M.save(user_default_key, value)
       return false
    end
 end
- 
-function M.load(user_default_key)
+
+local function readData( user_default_key,  default_value)
    local path = system.pathForFile( M.filename, system.DocumentsDirectory )
    local contents = ""
    local file = io.open( path, "r" )
@@ -29,23 +35,26 @@ function M.load(user_default_key)
       local contents = file:read( "*a" )
       print( "contents : " .. contents )
       if (contents) then
-      	local jsonRead = json.decode(contents)
-      	if (jsonRead == nil) then
-      		print( "Value is nil" )
-      		io.close(file)
-      		return nil
-      	end
-     	local value = jsonRead[user_default_key]
-     	print( jsonRead )
-     	print( value )
-      	io.close( file )
-      	return value
+         local jsonRead = json.decode(contents)
+         if (jsonRead == nil) then
+            print( "Value is nil" )
+            io.close(file)
+            local tabel = {user_default_key = default_value}
+            saveData(tabel)
+         end
+         jsonRead[user_default_key] = default_value
+         io.close( file )
+         saveData(jsonRead)
       end
-      return nil
    else
       print( "Error: could not read scores from ", M.filename, "." )
    end
-   return nil
+end
+ 
+
+
+function M.save(user_default_key, value)
+	readData(user_default_key, value)
 end
 
 function M.load(user_default_key, default_value)
@@ -66,8 +75,13 @@ function M.load(user_default_key, default_value)
       		return default_value
       	end
      	local value = jsonRead[user_default_key]
-     	print( jsonRead )
-     	print( value )
+      if (value == nil) then
+            print( "Value is nil" )
+            io.close(file)
+            M.save(user_default_key, default_value)
+            return default_value
+         end
+        	print( value )
       	io.close( file )
       	return value
       end
@@ -77,5 +91,5 @@ function M.load(user_default_key, default_value)
    end
    return nil
 end
- 
+
 return M
