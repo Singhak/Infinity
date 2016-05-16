@@ -118,6 +118,7 @@ function scene:destroy( event )
 		home_button = nil
 	end
 	if (countDownTimer) then
+		secondsLeft = 0
 		timer.cancel( countDownTimer )
 	end
 	quiz_text:removeSelf( )

@@ -5,9 +5,9 @@ M.filename = "userdefault.json"
 
 M.soundTable = {
 
-    num_click_sound = audio.loadSound( "game_button_click.wav" ),
-    button_click_sound = audio.loadSound( "other_button_click.wav" ),
-    wrong_button_click = audio.loadSound( "wrong_answer.wav" ),
+    num_click_sound = audio.loadSound( "game_button_click.mp3" ),
+    button_click_sound = audio.loadSound( "other_button_click.mp3" ),
+    wrong_button_click = audio.loadSound( "wrong_answer.mp3" ),
     background_sound = audio.loadSound( "background_music.mp3" )
 }
 
@@ -29,11 +29,11 @@ local function readData( user_default_key,  default_value)
    local path = system.pathForFile( M.filename, system.DocumentsDirectory )
    local contents = ""
    local file = io.open( path, "r" )
-   print( "path : " .. path )
+   print( "readData path : " .. path )
    if ( file ) then
       -- Read all contents of file into a string
       local contents = file:read( "*a" )
-      print( "contents : " .. contents )
+      print( "contents readData: " .. contents )
       if (contents) then
          local jsonRead = json.decode(contents)
          if (jsonRead == nil) then
@@ -41,10 +41,11 @@ local function readData( user_default_key,  default_value)
             io.close(file)
             local tabel = {user_default_key = default_value}
             saveData(tabel)
+         else
+            jsonRead[user_default_key] = default_value
+            io.close( file )
+            saveData(jsonRead)
          end
-         jsonRead[user_default_key] = default_value
-         io.close( file )
-         saveData(jsonRead)
       end
    else
       print( "Error: could not read scores from ", M.filename, "." )

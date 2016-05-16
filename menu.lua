@@ -48,7 +48,7 @@ function scene:create( event )
 	sceneGroup:insert( setting_button )
 	sceneGroup:insert( leaderboard_button )
 	sceneGroup:insert( start_button )
-	sceneGroup:insert( help_button )
+	-- sceneGroup:insert( help_button )
 end
 
 function scene:show( event )
@@ -105,11 +105,11 @@ function initUi()
 	start_button.id = "play"
 	start_button:addEventListener( "touch", onButtonClick )
 
-	help_button = display.newImageRect("help_ic.png",60, 60)
-	help_button.y = contentH - help_button.height * 0.60
-	help_button.x = contentW * 0.50
-	help_button.id = "help"
-	help_button:addEventListener( "touch", onButtonClick )
+	-- help_button = display.newImageRect("help_ic.png",60, 60)
+	-- help_button.y = contentH - help_button.height * 0.60
+	-- help_button.x = contentW * 0.50
+	-- help_button.id = "help"
+	-- help_button:addEventListener( "touch", onButtonClick )
 end
 
 function onButtonClick( event )

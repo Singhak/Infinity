@@ -135,6 +135,28 @@ end
 -- If scene's view is removed, scene:destroyScene() will be called just prior to:
 function scene:destroy( event )
     local group = self.view
+    if (home_button) then
+         home_button:removeSelf( )
+    end 
+    if (restart_button) then
+         restart_button:removeSelf( )
+    end 
+    if (current_score) then
+         current_score:removeSelf( )
+    end 
+ 
+    if (best_score) then
+         best_score:removeSelf( )
+    end 
+    if (score_label) then
+         score_label:removeSelf( )
+    end 
+    if (best_score_label) then
+         best_score_label:removeSelf( )
+    end 
+    if (background) then
+        background:removeSelf( )
+    end
 end
 
 -----------------------------------------------------------------------------------------
