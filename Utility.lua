@@ -15,6 +15,7 @@ local function saveData( tabel )
    local path = system.pathForFile( M.filename, system.DocumentsDirectory )
    local file = io.open(path, "w")
    if ( file ) then
+      print( "saveData: " )
       local jsonSaveGame = json.encode(tabel)
       file:write( jsonSaveGame )
       io.close( file )
@@ -48,7 +49,9 @@ local function readData( user_default_key,  default_value)
          end
       end
    else
-      print( "Error: could not read scores from ", M.filename, "." )
+      print( "readData key: " ..user_default_key )
+      local jsonRead = {user_default_key = default_value}
+      saveData(jsonRead)
    end
 end
  
@@ -66,7 +69,7 @@ function M.load(user_default_key, default_value)
    if ( file ) then
       -- Read all contents of file into a string
       local contents = file:read( "*a" )
-      print( "contents : " .. contents )
+      -- print( "contents : " .. contents )
       if (contents) then
       	local jsonRead = json.decode(contents)
       	if (jsonRead == nil) then
@@ -75,8 +78,8 @@ function M.load(user_default_key, default_value)
       		M.save(user_default_key, default_value)
       		return default_value
       	end
-     	local value = jsonRead[user_default_key]
-      if (value == nil) then
+     	   local value = jsonRead[user_default_key]
+         if (value == nil) then
             print( "Value is nil" )
             io.close(file)
             M.save(user_default_key, default_value)
@@ -85,10 +88,16 @@ function M.load(user_default_key, default_value)
         	print( value )
       	io.close( file )
       	return value
+      else
+         io.close( file )
+         M.save(user_default_key, default_value)
+         return default_value
       end
       return nil
    else
-      print( "Error: could not read scores from ", M.filename, "." )
+      print( "load key:" ..user_default_key )
+      M.save(user_default_key, default_value)
+      return default_value
    end
    return nil
 end
