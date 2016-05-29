@@ -44,6 +44,8 @@ local countDownTimer
 local isGameOver = false
 local onGameOver
 local score_lable
+local quiz_counter = 1
+local quiz_num = 0
 
 local function listener1( obj )
     nextNum()
@@ -92,7 +94,8 @@ function scene:show( event )
 			nextNum()
 			secondsLeft = 30
 		elseif (game_mode == "fifteenSecond") then
-			getQuiz(4)
+			quiz_num = math.random( 4 )
+			getQuiz(quiz_num)
 			secondsLeft = 15
 			print( "second left " ..secondsLeft )
 		end
@@ -187,7 +190,22 @@ function onButtonClick( event )
 			score_counter = score_counter + 1
 			score_text.text = score_counter
 			if (game_mode == "fifteenSecond") then
-				getQuiz(1)
+				if (quiz_counter == 5) then
+					secondsLeft = secondsLeft + 16
+					quiz_counter = 0
+					local n = math.random( 4 )
+					if (n == quiz_num) then
+						if (n == 4) then
+							quiz_num = n - 1;
+						else
+							quiz_num = n + 1
+						end
+					else
+						quiz_num = n
+					end
+				end
+				quiz_counter = quiz_counter + 1
+				getQuiz(quiz_num)
 			else
 				transition.fadeOut( quiz_text, { time=500, onComplete=listener1} )
 				event.target.id = largest_num
@@ -253,8 +271,8 @@ function initUI( )
 	timer_clock:setFillColor( 1, 0, 1 )
 
 	home_button = display.newImageRect("home_icon_crop.png",50, 50)
-	home_button.y = contentHeight - home_button.height *.55
-	home_button.x = home_button.width * .55
+	home_button.y = home_button.height *.55
+	home_button.x = contentWidth - home_button.width * .55
 	home_button.id = "home"
 	home_button:addEventListener( "touch", onButtonClick )
 
@@ -323,7 +341,7 @@ function nextNum(  )
 end
 
 function updateButton( )
-	print( "update group " ..#buttongroup)
+	-- print( "update group " ..#buttongroup)
 	for j = 1, buttongroup.numChildren do
 		-- print( "update group " ..j)
 		local child = buttongroup[j]
@@ -336,7 +354,7 @@ local function numExist( num )
 	for j = 1, #num_table do
 		-- print( "exist false" )
 		if (num_table[j] == num) then
-			print( "exist true" )
+			-- print( "exist true" )
 			return true
 		end
 	end
@@ -345,8 +363,8 @@ end
 function addNumtoTable( num )
 	local table_size = (grid_size + 1) * (grid_size + 1)
 	local index = math.random( table_size)
-	print( "index " ..index )
-	if (not numExist()) then
+	-- print( "index " ..index )
+	if (not numExist(num)) then
 		num_table[index] = num
 	end
 	shuffleTable(num_table)
@@ -354,21 +372,21 @@ function addNumtoTable( num )
 end
 
 function getQuiz( quiznum )
-	print( "quiz num " .. quiznum )
+	-- print( "quiz num " .. quiznum )
 	if (quiznum == 1) then
-		print( "quiz num sum" )
+		-- print( "quiz num sum" )
 		next_num, ans = quiz.sum()
 		addNumtoTable(ans)
 	elseif (quiznum == 2) then
-		print( "quiz num minus " .. quiznum )
+		-- print( "quiz num minus " .. quiznum )
 		next_num, ans = quiz.minus()
 		addNumtoTable(ans)
 	elseif (quiznum == 3) then
-		print( "quiz num mul " .. quiznum )
+		-- print( "quiz num mul " .. quiznum )
 		next_num, ans = quiz.multiply()
 		addNumtoTable(ans)
 	elseif (quiznum == 4) then
-		print( "quiz num divide " .. quiznum )
+		-- print( "quiz num divide " .. quiznum )
 		next_num, ans = quiz.divide()
 		addNumtoTable(ans)
 	end

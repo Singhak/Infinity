@@ -11,6 +11,7 @@ local centerY = display.contentCenterY
 local initUi
 local composer = require( "composer" )
 local toast = require('plugin.toast')
+local ads = require "ads"
 
 local scene = composer.newScene()
 
@@ -56,6 +57,7 @@ function scene:show( event )
 	local phase = event.phase
 	
 	if phase == "will" then
+		ads.hide()
 		-- Called when the scene is still off screen and is about to move on screen
 	elseif phase == "did" then
 		-- Called when the scene is now on screen

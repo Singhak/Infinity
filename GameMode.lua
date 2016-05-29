@@ -160,7 +160,8 @@ function onButtonClick( event )
     
     if (event.phase == "began") then
         playSound()
-        local msg = "In this mode by default time is 30 seconds, but time will increase by 1 second when you will give right answer."
+        local msg = "In this mode you have 15 second to solve FIVE mathamatical puzzel. After each set ofpuzzel" .." "..
+        "next new set of Five puzzel come and add 15 second more in remaining time. For solving each puzzel you will get 1 point"
         if (id == "fifteenSecond") then
             options =
             {
