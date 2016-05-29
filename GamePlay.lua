@@ -16,12 +16,19 @@ local initUI
 local shuffleTable
 local createNumTable
 local getRandomNum 
-local nextNum 
+local nextNum
+local addNumtoTable
+local getQuiz
+local ans = 0
+local question
 local num_table = {}
+local click_enable = true
 
+local ads = require "ads"
 local widget = require "widget"
 local composer = require( "composer" )
 local utility = require ("Utility")
+local quiz = require ("QuizGenerater")
 local scene = composer.newScene()
 
 local is_effect_on = true
@@ -50,6 +57,7 @@ local function playSound( )
 end
 
 function scene:create( event )
+	ads.init( "admob", utility.bannerad, nil )
     local sceneGroup = self.view
     local params = event.params
 	game_mode = params.mode
@@ -79,18 +87,21 @@ function scene:show( event )
 	local phase = event.phase
 	
 	if phase == "will" then
-		next_num = getRandomNum()
-		nextNum()
 		if (game_mode == "timeAttack" or game_mode == "infinite") then
+			next_num = getRandomNum()
+			nextNum()
 			secondsLeft = 30
-			timer_clock.text = "00:" ..secondsLeft
-			countDownTimer = timer.performWithDelay( 1000, updateTime, 0)
-		elseif (game_mode == "infinite") then
-			
+		elseif (game_mode == "fifteenSecond") then
+			getQuiz(4)
+			secondsLeft = 15
+			print( "second left " ..secondsLeft )
 		end
 		-- Called when the scene is still off screen and is about to move on screen
 	elseif phase == "did" then
 		-- e.g. start timers, begin animation, play audio, etc.
+		timer_clock.text = "00:" ..secondsLeft
+		countDownTimer = timer.performWithDelay( 1000, updateTime, 0)
+		ads.show( "banner", { x=0, y=10000 } )
 	end	
 end
 
@@ -109,10 +120,9 @@ end
 
 function scene:destroy( event )
 	local sceneGroup = self.view
-	for j =1, #buttongroup do
-		buttongroup[j]:removeSelf( )
-		buttongroup[j] = nil
-	end
+	print( "buttongroup group " .. buttongroup.numChildren)
+	buttongroup:removeSelf( )
+	buttongroup = nil
 	if (home_button) then
 		home_button:removeSelf( )
 		home_button = nil
@@ -169,18 +179,23 @@ end
 
 function onButtonClick( event )
 	local id = event.target.id
-	if (event.phase == "began") then
+	if (click_enable and event.phase == "began") then
 		-- event.target.id = "anil"
-		if ( not isGameOver and id == next_num) then
+		if ( not isGameOver and (id == next_num or id == ans)) then
+			click_enable = false
 			playSound()
-			transition.fadeOut( quiz_text, { time=500, onComplete=listener1} )
 			score_counter = score_counter + 1
 			score_text.text = score_counter
-			event.target.id = largest_num
-			event.target:setLabel(largest_num)
-			next_num = getRandomNum()
-			if (game_mode == "infinite") then
-				secondsLeft = secondsLeft + 1
+			if (game_mode == "fifteenSecond") then
+				getQuiz(1)
+			else
+				transition.fadeOut( quiz_text, { time=500, onComplete=listener1} )
+				event.target.id = largest_num
+				event.target:setLabel(largest_num)
+				next_num = getRandomNum()
+				if (game_mode == "infinite") then
+					secondsLeft = secondsLeft + 1
+				end
 			end
 			print( id )
 		elseif (id == "home") then
@@ -234,7 +249,7 @@ end
 function initUI( )
 	quiz_text = display.newText( "", contentWidth * 0.5, contentHeight * 0.1, native.systemFontBold, 45 )
 	score_text = display.newText( score_counter, contentWidth * 0.24, contentHeight * 0.04, native.systemFont, 20 )
-	timer_clock = display.newText( "00:" .. secondsLeft, contentWidth * 0.5, contentHeight * 0.23, native.systemFontBold, 30 )
+	timer_clock = display.newText( "00:0" .. secondsLeft, contentWidth * 0.5, contentHeight * 0.23, native.systemFontBold, 30 )
 	timer_clock:setFillColor( 1, 0, 1 )
 
 	home_button = display.newImageRect("home_icon_crop.png",50, 50)
@@ -252,6 +267,7 @@ end
 math.randomseed( os.time() )
  
 function shuffleTable( t )
+	print( "shuffleTable" )
     local rand = math.random 
     assert( t, "shuffleTable() expected a table, got nil" )
     local iterations = #t
@@ -301,9 +317,66 @@ function updateTime( event )
 end
 
 function nextNum(  )
+	click_enable = true
 	quiz_text.text = next_num
 	transition.fadeIn( quiz_text, {time = 500} )
 end
+
+function updateButton( )
+	print( "update group " ..#buttongroup)
+	for j = 1, buttongroup.numChildren do
+		-- print( "update group " ..j)
+		local child = buttongroup[j]
+		child.id = num_table[j]
+		child:setLabel(num_table[j])
+	end
+end
+
+local function numExist( num )
+	for j = 1, #num_table do
+		-- print( "exist false" )
+		if (num_table[j] == num) then
+			print( "exist true" )
+			return true
+		end
+	end
+	return false
+end
+function addNumtoTable( num )
+	local table_size = (grid_size + 1) * (grid_size + 1)
+	local index = math.random( table_size)
+	print( "index " ..index )
+	if (not numExist()) then
+		num_table[index] = num
+	end
+	shuffleTable(num_table)
+	updateButton()
+end
+
+function getQuiz( quiznum )
+	print( "quiz num " .. quiznum )
+	if (quiznum == 1) then
+		print( "quiz num sum" )
+		next_num, ans = quiz.sum()
+		addNumtoTable(ans)
+	elseif (quiznum == 2) then
+		print( "quiz num minus " .. quiznum )
+		next_num, ans = quiz.minus()
+		addNumtoTable(ans)
+	elseif (quiznum == 3) then
+		print( "quiz num mul " .. quiznum )
+		next_num, ans = quiz.multiply()
+		addNumtoTable(ans)
+	elseif (quiznum == 4) then
+		print( "quiz num divide " .. quiznum )
+		next_num, ans = quiz.divide()
+		addNumtoTable(ans)
+	end
+	if (next_num ~= nil) then
+		transition.fadeOut( quiz_text, { time=500, onComplete=listener1} )
+	end
+end
+
 scene:addEventListener( "create", scene )
 scene:addEventListener( "show", scene )
 scene:addEventListener( "hide", scene )

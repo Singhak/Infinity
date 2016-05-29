@@ -1,7 +1,7 @@
 --
 -- For more information on build.settings see the Corona SDK Build Guide at:
 -- http://docs.coronalabs.com/guide/distribution/buildSettings/index.html
---
+-- com.alien.apps.goinfinity
 
 settings =
 {
@@ -25,8 +25,10 @@ settings =
 	--
 	-- Toast plugin
 	--
-	plugins = {  
-    ['plugin.toast'] = {publisherId = 'com.spiralcodestudio'}
+	plugins = 
+	{  
+   		["plugin.google.play.services"] = {publisherId = "com.coronalabs", supportedPlatforms = {android=true} },
+        ['plugin.toast'] = {publisherId = 'com.spiralcodestudio'},
 	},
 
 	--

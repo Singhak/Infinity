@@ -2,7 +2,7 @@ local json = require( "json" )
 local M = {}
 -- M.userdefault_table = {}
 M.filename = "userdefault.json"
-
+M.bannerad = "ca-app-pub-4734999561630998/3143591268"
 M.soundTable = {
 
     num_click_sound = audio.loadSound( "game_button_click.mp3" ),

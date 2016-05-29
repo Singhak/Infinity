@@ -160,6 +160,7 @@ function onButtonClick( event )
     
     if (event.phase == "began") then
         playSound()
+        local msg = "In this mode by default time is 30 seconds, but time will increase by 1 second when you will give right answer."
         if (id == "fifteenSecond") then
             options =
             {
@@ -169,7 +170,8 @@ function onButtonClick( event )
                              mode = "fifteenSecond",
                         }
             }
-            toast.show("To be announce")
+            -- toast.show("To be announce")
+            alertBox(msg)
             -- composer.showOverlay( "GamePlay", options )
         elseif (id == "infinite") then
             local msg = "In this mode by default time is 30 seconds, but time will increase by 1 second when you will give right answer."

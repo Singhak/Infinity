@@ -11,7 +11,7 @@ display.setStatusBar( display.HiddenStatusBar )
 local composer = require "composer"
 local utility = require("Utility")
 -- load menu screen
-splashscreen = display.newImage( "splash.png" );
+splashscreen = display.newImageRect( "splash.png", display.contentWidth, display.contentHeight );
 splashscreen.x = display.contentCenterX
 splashscreen.y = display.contentCenterY
 
