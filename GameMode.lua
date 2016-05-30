@@ -160,7 +160,7 @@ function onButtonClick( event )
     
     if (event.phase == "began") then
         playSound()
-        local msg = "In this mode you have 15 second to solve FIVE mathamatical puzzel. After each set ofpuzzel" .." "..
+        local msg = "In this mode you have 15 second to solve set of FIVE mathamatical puzzel. After each set of puzzel" .." "..
         "next new set of Five puzzel come and add 15 second more in remaining time. For solving each puzzel you will get 1 point"
         if (id == "fifteenSecond") then
             options =

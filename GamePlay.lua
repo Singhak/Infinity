@@ -152,8 +152,8 @@ function createButton( tag )
         cornerRadius = 3,
         fillColor = {default={0.8,0.8,1,1}, over={1,0.4,0,1}},
         -- fillColor = { default={1,0,0,1}, over={1,0.1,0.7,0.4} },
-        strokeColor = { default={1,0,0,1}, over={1,0.1,0.7,0.4} },
-        strokeWidth = 4
+        strokeColor = { default={1,0.5,0,1}, over={1,0.1,0.7,0.4} },
+        strokeWidth = 3
     })
     return button
 end
@@ -185,13 +185,14 @@ function onButtonClick( event )
 	if (click_enable and event.phase == "began") then
 		-- event.target.id = "anil"
 		if ( not isGameOver and (id == next_num or id == ans)) then
+			timer.pause( countDownTimer )
 			click_enable = false
 			playSound()
 			score_counter = score_counter + 1
 			score_text.text = score_counter
 			if (game_mode == "fifteenSecond") then
 				if (quiz_counter == 5) then
-					secondsLeft = secondsLeft + 16
+					secondsLeft = secondsLeft + 15
 					quiz_counter = 0
 					local n = math.random( 4 )
 					if (n == quiz_num) then
@@ -338,6 +339,10 @@ function nextNum(  )
 	click_enable = true
 	quiz_text.text = next_num
 	transition.fadeIn( quiz_text, {time = 500} )
+	if (countDownTimer) then
+		timer.resume( countDownTimer )
+	end
+	
 end
 
 function updateButton( )
