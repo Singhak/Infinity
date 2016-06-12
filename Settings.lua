@@ -26,7 +26,7 @@ local effect_off_img = {type = "image", filename = "music_off.png"}
 local background = display.newRoundedRect(0,0, contentW  * 0.8, contentH * 0.5, 15)
 background.strokeWidth = 4
 background:setFillColor( 0.1 )
-background:setStrokeColor( 1, 0, 1 )
+background:setStrokeColor( .6, .5, .5 )
 background.x = display.contentWidth * .5
 background.y = display.contentHeight *.5
 
@@ -87,7 +87,7 @@ local function initUI( )
 	more_apps_button:addEventListener( "touch", onButtonClick )
 
 	-- LeaderboardButton
-	leaderboard_button = display.newImageRect("lb_icon.png", 45, 45)
+	leaderboard_button = display.newImageRect("leader_board_icon.png", 45, 45)
 	leaderboard_button.y = contentH * .68 - leaderboard_button.height
 	leaderboard_button.x = contentW * .078 + leaderboard_button.width
 	leaderboard_button.id = "leaderboard"
@@ -128,7 +128,7 @@ local function initUI( )
         height = 30,
         cornerRadius = 3,
         fillColor = {default={0.8,0.8,1,1}, over={1,0.4,0,1}},
-        strokeColor = { default={1,0,1,1}, over={1,0.1,0.7,0.4} },
+        strokeColor = { default={.5,0.5,1,1}, over={1,0.1,0.7,0.4} },
         strokeWidth = 4,
         id = "close"
     })

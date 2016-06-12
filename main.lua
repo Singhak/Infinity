@@ -10,8 +10,9 @@ display.setStatusBar( display.HiddenStatusBar )
 -- include the Corona "composer" module
 local composer = require "composer"
 local utility = require("Utility")
+
 -- load menu screen
-splashscreen = display.newImageRect( "splash.png", display.contentWidth, display.contentHeight );
+local splashscreen = display.newImageRect( "Default.png", display.contentWidth, display.contentHeight );
 splashscreen.x = display.contentCenterX
 splashscreen.y = display.contentCenterY
 
@@ -24,5 +25,5 @@ local function removeSplash(event)
 	composer.gotoScene( "menu", "fade", 500  )
 end
 
--- transition.fadeIn( splashscreen, {time = 0} )
-transition.fadeOut( splashscreen, {time = 2000, onComplete = removeSplash} )
+transition.fadeOut( splashscreen, {time = 1000, onComplete = removeSplash} )
+

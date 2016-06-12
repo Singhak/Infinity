@@ -24,11 +24,13 @@ settings =
 	
 	--
 	-- Toast plugin
+	-- GPGS plugin
 	--
 	plugins = 
 	{  
    		["plugin.google.play.services"] = {publisherId = "com.coronalabs", supportedPlatforms = {android=true} },
         ['plugin.toast'] = {publisherId = 'com.spiralcodestudio'},
+        ["CoronaProvider.native.popup.social"] = {publisherId = "com.coronalabs"},
 	},
 
 	--
@@ -88,5 +90,6 @@ settings =
 			"android.permission.INTERNET",
             "android.permission.WRITE_EXTERNAL_STORAGE",
 		},
+		googlePlayGamesAppId = "84643233071"
 	},
 }

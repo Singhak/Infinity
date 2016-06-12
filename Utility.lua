@@ -3,11 +3,17 @@ local M = {}
 -- M.userdefault_table = {}
 M.filename = "userdefault.json"
 M.bannerad = "ca-app-pub-4734999561630998/3143591268"
+M.fullScreenad = "ca-app-pub-4734999561630998/7029270465"
+
+M.leaderboardTimeAttack = "CgkIr_qEqbsCEAIQAg"
+M.leaderboard15Seconds = "CgkIr_qEqbsCEAIQAA"
+M.leaderboardInfinity = "CgkIr_qEqbsCEAIQAQ"
+
 M.soundTable = {
 
-    num_click_sound = audio.loadSound( "game_button_click.mp3" ),
-    button_click_sound = audio.loadSound( "other_button_click.mp3" ),
-    wrong_button_click = audio.loadSound( "wrong_answer.mp3" ),
+    num_click_sound = audio.loadSound( "answer_click.mp3" ),
+    button_click_sound = audio.loadSound( "answer_click.mp3" ),
+    wrong_button_click = audio.loadSound( "wrong_click.mp3" ),
     background_sound = audio.loadSound( "background_music.mp3" )
 }
 

@@ -5,7 +5,7 @@ local contentHeight = display.contentHeight
 local centerX = display.contentCenterX
 local centerY = display.contentCenterY
 local buttongroup = display.newGroup()
-local buttonW = 40.0
+local buttonW = 50.0
 local stepX = 30.0
 local grid_size = 3
 local largest_num = (grid_size + 1) * (grid_size + 1)
@@ -67,7 +67,7 @@ function scene:create( event )
 
     is_effect_on = utility.load("effect", true)
 
-    local background = display.newImageRect( "blank.png", display.contentWidth, display.contentHeight )
+    local background = display.newImageRect( "bg1_320.jpg", display.contentWidth, display.contentHeight )
 	background.anchorX = 0
 	background.anchorY = 0
 	background.x, background.y = 0, 0
@@ -81,7 +81,7 @@ function scene:create( event )
     sceneGroup:insert( score_text )
     sceneGroup:insert( timer_clock )
     sceneGroup:insert( score_lable )
-    sceneGroup:insert( home_button )
+    -- sceneGroup:insert( home_button )
 end
 
 function scene:show( event )
@@ -104,7 +104,8 @@ function scene:show( event )
 		-- e.g. start timers, begin animation, play audio, etc.
 		timer_clock.text = "00:" ..secondsLeft
 		countDownTimer = timer.performWithDelay( 1000, updateTime, 0)
-		ads.show( "banner", { x=0, y=10000 } )
+		ads.show( "banner", { x=0, y=10000, appId = utility.bannerad } )
+
 	end	
 end
 
@@ -145,15 +146,19 @@ function createButton( tag )
 	local button = widget.newButton(
     {
         label = tag,
+        labelColor = { default={ 1, 1, 1 }, over={ 0, 0, 0, 0.5 } },
         emboss = true,
-        shape = "roundedRect",
+        fontSize = 18,
+        -- shape = "roundedRect",
         width = buttonW,
         height = buttonW,
-        cornerRadius = 3,
-        fillColor = {default={0.8,0.8,1,1}, over={1,0.4,0,1}},
+        defaultFile = "btn2.png",
+        overFile = "btn7.png",
+        -- cornerRadius = 3,
+        -- fillColor = {default={0.8,0.8,1,1}, over={1,0.4,0,1}},
         -- fillColor = { default={1,0,0,1}, over={1,0.1,0.7,0.4} },
-        strokeColor = { default={1,0.5,0,1}, over={1,0.1,0.7,0.4} },
-        strokeWidth = 3
+        -- strokeColor = { default={1,0.5,0,1}, over={1,0.1,0.7,0.4} },
+        -- strokeWidth = 3
     })
     return button
 end
@@ -185,7 +190,7 @@ function onButtonClick( event )
 	if (click_enable and event.phase == "began") then
 		-- event.target.id = "anil"
 		if ( not isGameOver and (id == next_num or id == ans)) then
-			timer.pause( countDownTimer )
+			-- timer.pause( countDownTimer )
 			click_enable = false
 			playSound()
 			score_counter = score_counter + 1
@@ -218,6 +223,7 @@ function onButtonClick( event )
 			end
 			print( id )
 		elseif (id == "home") then
+			isGameOver = true
 			event.target.xScale = .8 -- scale the button on touch release 
     		event.target.yScale = .8
 		elseif (not isGameOver) then
@@ -231,9 +237,10 @@ function onButtonClick( event )
 			end			
 			event.target.xScale = 1 -- scale the button on touch release 
     		event.target.yScale = 1
-    		composer.removeScene( "GamePlay", false )
-    		composer.removeScene( "GameMode", false )
-    		composer.gotoScene( "menu", "fade", 500 )
+    		Runtime:removeEventListener( "key", onKeyEvent )
+    		-- composer.removeScene( "GamePlay", false )
+    		-- composer.removeScene( "GameMode", false )
+    		composer.gotoScene( "menu", "fromLeft", 500 )
 		end
 	end
 
@@ -259,8 +266,9 @@ function onGameOver( )
                     score = score_counter
                 }
     }
-    composer.removeScene( "GamePlay", false )
-	composer.removeScene( "GameMode", false )
+    Runtime:removeEventListener( "key", onKeyEvent )
+    -- composer.removeScene( "GamePlay", false )
+	-- composer.removeScene( "GameMode", false )
 	composer.gotoScene( "GameOver", options )
 	print( "Game over" )
 end
@@ -271,11 +279,11 @@ function initUI( )
 	timer_clock = display.newText( "00:0" .. secondsLeft, contentWidth * 0.5, contentHeight * 0.23, native.systemFontBold, 30 )
 	timer_clock:setFillColor( 1, 0, 1 )
 
-	home_button = display.newImageRect("home_icon_crop.png",50, 50)
-	home_button.y = home_button.height *.55
-	home_button.x = contentWidth - home_button.width * .55
-	home_button.id = "home"
-	home_button:addEventListener( "touch", onButtonClick )
+	-- home_button = display.newImageRect("home_icon_crop.png",50, 50)
+	-- home_button.y = home_button.height *.55
+	-- home_button.x = contentWidth - home_button.width * .55
+	-- home_button.id = "home"
+	-- home_button:addEventListener( "touch", onButtonClick )
 
 	createNumTable((grid_size+1) * (grid_size+1))
 	createButtonGrid(grid_size)
@@ -338,11 +346,7 @@ end
 function nextNum(  )
 	click_enable = true
 	quiz_text.text = next_num
-	transition.fadeIn( quiz_text, {time = 500} )
-	if (countDownTimer) then
-		timer.resume( countDownTimer )
-	end
-	
+	transition.fadeIn( quiz_text, {time = 100} )
 end
 
 function updateButton( )
@@ -396,7 +400,7 @@ function getQuiz( quiznum )
 		addNumtoTable(ans)
 	end
 	if (next_num ~= nil) then
-		transition.fadeOut( quiz_text, { time=500, onComplete=listener1} )
+		transition.fadeOut( quiz_text, { time=100, onComplete=listener1} )
 	end
 end
 

@@ -17,9 +17,11 @@ local timeAttac_btn
 local is_effect_on = true
 local options
 local function onComplete( event )
+    Runtime:removeEventListener( "key", onKeyEvent )
     if ( event.action == "clicked" ) then
         local i = event.index
         if ( i == 1 ) then
+            -- composer.removeScene("menu", false)
             composer.gotoScene( "GamePlay", options )
             -- Do nothing; dialog will simply dismiss
         elseif ( i == 2 ) then
@@ -44,7 +46,7 @@ end
 function scene:create( event )
 
     local sceneGroup = self.view
-    local background = display.newImageRect( "blank.png", display.contentWidth, display.contentHeight )
+    local background = display.newImageRect( "bg1_320.jpg", display.contentWidth, display.contentHeight )
     background.anchorX = 0
     background.anchorY = 0
     background.x, background.y = 0, 0
@@ -106,14 +108,19 @@ function initUI( )
     infiniteMode_btn = widget.newButton(
     {
         label = "Infinite",
+        labelXOffset = 10,
         emboss = true,
-        shape = "roundedRect",
-        width = 150,
-        height = 50,
-        cornerRadius = 3,
-        fillColor = {default={0.8,0.8,1,1}, over={1,0.4,0,1}},
-        strokeColor = { default={1,0,1,1}, over={1,0.1,0.7,0.4} },
-        strokeWidth = 4,
+        fontSize = 20,
+        labelColor = { default={ 0, 0, 1 }, over={ 0, 0, 0, 0.5 } },
+        -- shape = "roundedRect",
+        width = 250,
+        height = 54,
+        defaultFile = "infinite_btn.png",
+        overFile = "infinite_btn.png",
+        -- cornerRadius = 3,
+        -- fillColor = {default={0.8,0.8,1,1}, over={1,0.4,0,1}},
+        -- strokeColor = { default={1,0,1,1}, over={1,0.1,0.7,0.4} },
+        -- strokeWidth = 4,
         id = "infinite"
     })
     infiniteMode_btn.x = display.contentWidth*0.5
@@ -123,14 +130,19 @@ function initUI( )
     fifteenSec_btn = widget.newButton(
     {
         label = "15 seconds",
+        labelXOffset = 20,
         emboss = true,
-        shape = "roundedRect",
-        width = 150,
-        height = 50,
-        cornerRadius = 3,
-        fillColor = {default={0.8,0.8,1,1}, over={1,0.4,0,1}},
-        strokeColor = { default={1,0,1,1}, over={1,0.1,0.7,0.4} },
-        strokeWidth = 4,
+        fontSize = 20,
+        labelColor = { default={ 0, 0, 1 }, over={ 0, 0, 0, 0.5 } },
+        -- shape = "roundedRect",
+        width = 250,
+        height = 54,
+        defaultFile = "15sec_btn.png",
+        overFile = "15sec_btn.png",
+        -- cornerRadius = 3,
+        -- fillColor = {default={0.8,0.8,1,1}, over={1,0.4,0,1}},
+        -- strokeColor = { default={1,0,1,1}, over={1,0.1,0.7,0.4} },
+        -- strokeWidth = 4,
         id = "fifteenSecond"
     })
     fifteenSec_btn.x = display.contentWidth*0.5
@@ -140,14 +152,19 @@ function initUI( )
     timeAttac_btn = widget.newButton(
     {
         label = "Time Attack",
+        labelXOffset = 20,
         emboss = true,
-        shape = "roundedRect",
-        width = 150,
-        height = 50,
-        cornerRadius = 3,
-        fillColor = {default={0.8,0.8,1,1}, over={1,0.4,0,1}},
-        strokeColor = { default={1,0,1,1}, over={1,0.1,0.7,0.4} },
-        strokeWidth = 4,
+        fontSize = 20,
+        labelColor = { default={ 0, 0, 1 }, over={ 0, 0, 0, 0.5 } },
+        -- shape = "roundedRect",
+        width = 250,
+        height = 54,
+         defaultFile = "time_attack_btn.png",
+        overFile = "time_attack_btn.png",
+        -- cornerRadius = 3,
+        -- fillColor = {default={0.8,0.8,1,1}, over={1,0.4,0,1}},
+        -- strokeColor = { default={1,0,1,1}, over={1,0.1,0.7,0.4} },
+        -- strokeWidth = 4,
         id = "timeAttack"
     })
     timeAttac_btn.x = display.contentWidth*0.5
@@ -159,48 +176,70 @@ function onButtonClick( event )
     local id = event.target.id
     
     if (event.phase == "began") then
+        event.target.xScale = .8 -- scale the button on touch began 
+        event.target.yScale = .8
         playSound()
         local msg = "In this mode you have 15 second to solve set of FIVE mathamatical puzzel. After each set of puzzel" .." "..
         "next new set of Five puzzel come and add 15 second more in remaining time. For solving each puzzel you will get 1 point"
         if (id == "fifteenSecond") then
             options =
             {
-                effect = "fade",
+                effect = "fromRight",
                 time = 500,
                 params ={
                              mode = "fifteenSecond",
                         }
             }
             -- toast.show("To be announce")
-            alertBox(msg)
+            if (utility.load("_15sec_help", true)) then
+                utility.save("_15sec_help", false)
+                alertBox(msg)
+            else
+                composer.gotoScene( "GamePlay", options )
+            end
+            
             -- composer.showOverlay( "GamePlay", options )
         elseif (id == "infinite") then
             local msg = "In this mode by default time is 30 seconds, but time will increase by 1 second when you will give right answer."
             options =
             {
-                effect = "fade",
+                effect = "fromRight",
                 time = 500,
                 params ={
                              mode = "infinite",
                         }
             }
-            alertBox(msg)
-            -- composer.gotoScene( "GamePlay", options )
+            if (utility.load("_infinite_help", true)) then
+                utility.save("_infinite_help", false)
+                alertBox(msg)
+            else
+                composer.gotoScene( "GamePlay", options )
+            end
+            -- 
         elseif (id == "timeAttack") then
             local msg = "In this mode you have to make maximum score with in given time limit."
             options =
             {
-                effect = "fade",
+                effect = "fromRight",
                 time = 500,
                 params ={
                              mode = "timeAttack",
                         }
             }
-            alertBox(msg)
+             if (utility.load("_timeAttack_help", true)) then
+                utility.save("_timeAttack_help", false)
+                alertBox(msg)
+            else
+                composer.gotoScene( "GamePlay", options )
+            end
             -- composer.gotoScene( "GamePlay", options )
         end
+    elseif(event.phase == "ended" or event.phase == "cancelled") then
+        event.target.xScale = 1 -- Re-scale the button on touch release 
+        event.target.yScale = 1
     end
 end
+
 -- -------------------------------------------------------------------------------
 
 -- Listener setup
