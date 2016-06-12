@@ -11,6 +11,8 @@ In this mode user have 15 second to solve set of five mathametical puzzel. After
 3. Time Attack</br>
 In this mode user have 30 seconds fixed time and click right number as many more user cane</br></br>
 
+<b>Download it from play store</b>
+<href>https://play.google.com/store/apps/details?id=com.alien.apps.goinfinity</href></br>
 Upcomming Feature </br>>
 LeaderBoard</br>
 and many more...
